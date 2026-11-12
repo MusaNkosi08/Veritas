@@ -1,0 +1,228 @@
+// ─────────────────────────────────────────────────────────────
+// Veritas · Global styles
+// Kept deliberately thin: tokens, a reset, typographic defaults
+// and a few primitives (button, field, chip, table). Everything
+// else lives in component-scoped SCSS.
+// ─────────────────────────────────────────────────────────────
+
+@use 'styles/tokens';
+@use 'styles/mixins' as m;
+@use 'styles/print';
+
+// ── Reset ────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  font-feature-settings: 'cv11' 1, 'ss01' 1; // Inter: straight-sided l, open digits
+}
+
+img, svg, video { display: block; max-width: 100%; }
+
+input, button, textarea, select { font: inherit; color: inherit; }
+
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+
+p, h1, h2, h3, h4 { overflow-wrap: break-word; }
+
+// ── Typography ───────────────────────────────────────────────
+h1, h2, h3 {
+  @include m.display;
+  color: var(--ink);
+  text-wrap: balance;
+}
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+
+h4 { @include m.eyebrow; }
+
+p { text-wrap: pretty; max-width: var(--reading-max); }
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  @include m.transition(color, text-decoration-color);
+  @include m.focus-visible;
+
+  &:hover { text-decoration-color: transparent; }
+}
+
+code, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--paper-sunk);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+  padding: 0.05em 0.35em;
+}
+
+hr { border: 0; border-top: var(--hairline); }
+
+::selection { background: var(--accent-wash); color: var(--ink); }
+
+// ── Utilities ────────────────────────────────────────────────
+.container { @include m.container; }
+.sr-only   { @include m.sr-only; }
+.numeric   { @include m.numeric; }
+.eyebrow   { @include m.eyebrow; }
+
+.skip-link {
+  @include m.sr-only;
+  &:focus {
+    position: fixed;
+    top: var(--space-3);
+    left: var(--space-3);
+    width: auto; height: auto;
+    clip: auto; margin: 0;
+    padding: var(--space-2) var(--space-4);
+    background: var(--ink);
+    color: var(--paper);
+    z-index: 100;
+  }
+}
+
+// ── Primitives ───────────────────────────────────────────────
+// Buttons: one primary per view, everything else secondary or quiet.
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem; // 44px touch target
+  padding: 0 var(--space-5);
+  border: var(--hairline-ink);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  @include m.transition(background-color, color, border-color, opacity);
+  @include m.focus-visible;
+
+  &--primary {
+    background: var(--ink);
+    color: var(--paper);
+    &:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); }
+  }
+  &--secondary {
+    background: transparent;
+    color: var(--ink);
+    &:hover:not(:disabled) { background: var(--paper-sunk); }
+  }
+  &--quiet {
+    border-color: transparent;
+    color: var(--ink-muted);
+    padding-inline: var(--space-2);
+    &:hover:not(:disabled) { color: var(--ink); }
+  }
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// Form fields
+.field {
+  display: grid;
+  gap: var(--space-2);
+
+  &__label { @include m.eyebrow; color: var(--ink-muted); }
+  &__hint  { font-size: var(--text-xs); color: var(--ink-faint); }
+  &__error { font-size: var(--text-xs); color: var(--signal-high-ink); }
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--paper-sunk);
+  border: var(--hairline);
+  border-radius: var(--radius-sm);
+  @include m.transition(border-color, background-color, box-shadow);
+
+  &::placeholder { color: var(--ink-faint); }
+  &:hover { border-color: var(--rule-strong); }
+  &:focus-visible {
+    outline: none;
+    background: var(--paper-raised);
+    border-color: var(--ink);
+    box-shadow: var(--focus-ring);
+  }
+  &[aria-invalid='true'] { border-color: var(--signal-high); }
+}
+
+.textarea {
+  min-height: 20rem;
+  resize: vertical;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  line-height: var(--leading-body);
+}
+
+// Signal chip. Wash for the fill, -ink for the text: AA-safe at every level.
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semi);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    width: 0.5rem; height: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  &--low  { background: var(--signal-low-wash);  color: var(--signal-low-ink); }
+  &--mid  { background: var(--signal-mid-wash);  color: var(--signal-mid-ink); }
+  &--high { background: var(--signal-high-wash); color: var(--signal-high-ink); }
+  &--neutral { background: var(--paper-sunk); color: var(--ink-muted); }
+}
+
+// Data table: hairlines only, no zebra striping, numbers right-aligned.
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+
+  th {
+    @include m.eyebrow;
+    text-align: left;
+    padding: var(--space-3) var(--space-4) var(--space-3) 0;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  td {
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: var(--hairline);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: 0; }
+
+  .num { @include m.numeric; text-align: right; }
+}
+

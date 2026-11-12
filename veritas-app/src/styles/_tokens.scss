@@ -1,0 +1,126 @@
+// ─────────────────────────────────────────────────────────────
+// Veritas · Design tokens
+// One source of truth. Components read CSS custom properties,
+// never raw hex, so a print or high-contrast theme is a single
+// override block rather than a refactor.
+// ─────────────────────────────────────────────────────────────
+
+:root {
+  // ── Core palette (brand spec) ──────────────────────────────
+  --ink:          #0F1115;
+  --paper:        #FAF8F3;
+  --rule:         #D9D4C8;
+  --accent:       #6B4E2E;
+
+  // Signal hues. Used for FILLS only: gradient bar, chip
+  // backgrounds, chart strokes. Sage (2.8:1) and gold (2.1:1)
+  // fail WCAG AA as text on paper, so never set them as `color`.
+  --signal-low:   #8A9A7B;
+  --signal-mid:   #C9A961;
+  --signal-high:  #A65D57;
+
+  // Text-safe companions. Same hue, deepened until they clear
+  // 4.5:1 on --paper. Use these whenever a signal is read, not seen.
+  --signal-low-ink:  #55644A;  // 5.98:1
+  --signal-mid-ink:  #7A6224;  // 5.50:1
+  --signal-high-ink: #8E4640;  // 6.38:1
+
+  // Tints for chip/card washes. Mixed against paper so they
+  // stay quiet; text on them uses the -ink variants above.
+  --signal-low-wash:  color-mix(in srgb, var(--signal-low) 14%, var(--paper));
+  --signal-mid-wash:  color-mix(in srgb, var(--signal-mid) 18%, var(--paper));
+  --signal-high-wash: color-mix(in srgb, var(--signal-high) 12%, var(--paper));
+
+  // ── Derived neutrals ───────────────────────────────────────
+  --ink-muted:    #5A5D63;  // secondary text, 6.22:1
+  --ink-faint:    #6E6A61;  // captions, metadata, 5.08:1 (still AA)
+  --paper-raised: #FFFFFF;  // cards sit a half-step above the page
+  --paper-sunk:   #F3F0E8;  // inputs, code wells
+  --rule-strong:  #BFB8A8;  // focused inputs, table header underline
+  --accent-wash:  color-mix(in srgb, var(--accent) 8%, var(--paper));
+
+  // The verdict gradient, defined once so the bar, legend and
+  // print view cannot drift apart.
+  --signal-gradient: linear-gradient(
+    90deg,
+    var(--signal-low) 0%,
+    var(--signal-mid) 50%,
+    var(--signal-high) 100%
+  );
+
+  // ── Typography ─────────────────────────────────────────────
+  --font-display: 'Fraunces', 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans:    'Inter', 'Söhne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  // Modular scale, ratio 1.25. Display sizes step up harder
+  // because serif headlines carry the editorial weight.
+  --text-xs:   0.75rem;    // 12  · audit metadata, footnotes
+  --text-sm:   0.875rem;   // 14  · table cells, labels
+  --text-base: 1rem;       // 16  · body
+  --text-md:   1.125rem;   // 18  · lead paragraphs
+  --text-lg:   1.375rem;   // 22  · card titles
+  --text-xl:   1.75rem;    // 28  · section heads
+  --text-2xl:  2.25rem;    // 36  · page titles
+  --text-3xl:  3rem;       // 48  · verdict headline
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-body:  1.6;
+
+  --tracking-caps:  0.08em;  // small-caps labels, report section numbers
+  --tracking-tight: -0.015em;
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+
+  // ── Spacing (4px base) ─────────────────────────────────────
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.5rem;
+  --space-6:  2rem;
+  --space-7:  3rem;
+  --space-8:  4rem;
+  --space-9:  6rem;
+
+  // ── Layout ─────────────────────────────────────────────────
+  --content-max:  1200px;
+  --reading-max:  68ch;   // methodology prose, warnings
+  --gutter:       clamp(1.25rem, 4vw, 3rem);
+  --nav-height:   4.5rem;
+
+  // ── Lines & surfaces ───────────────────────────────────────
+  --hairline:     1px solid var(--rule);
+  --hairline-ink: 1px solid var(--ink);
+  --radius-sm:    2px;   // near-square. A lab report, not an app.
+  --radius-md:    4px;
+  --shadow-card:  0 1px 0 var(--rule), 0 12px 32px -24px rgb(15 17 21 / 0.18);
+
+  // ── Motion ─────────────────────────────────────────────────
+  --ease:          cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 200ms;
+  --duration-base: 260ms;
+  --duration-slow: 300ms;
+
+  // ── Focus ──────────────────────────────────────────────────
+  // Bronze ring with a paper gap reads on every surface,
+  // including signal washes.
+  --focus-ring: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
+
+  // ── Layers ─────────────────────────────────────────────────
+  --z-nav:     10;
+  --z-tooltip: 20;
+}
+
+// Motion is decorative here, never informational, so it can
+// be removed wholesale without losing meaning.
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

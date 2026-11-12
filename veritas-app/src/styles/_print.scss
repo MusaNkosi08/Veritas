@@ -1,0 +1,83 @@
+// ─────────────────────────────────────────────────────────────
+// Print sheet. "Export PDF" is window.print(), so this file IS the
+// PDF. A printed report may end up in a file for years; it must read
+// on its own, in greyscale, without the app around it.
+// ─────────────────────────────────────────────────────────────
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 14mm 18mm;
+  }
+
+  :root {
+    --paper: #ffffff;
+    --paper-raised: #ffffff;
+    --paper-sunk: #ffffff;
+    --shadow-card: none;
+  }
+
+  // Every size in the system is rem-based, so one root change rescales the
+  // whole report for paper without touching component styles.
+  html { font-size: 11.5px; }
+  html, body { background: #ffffff; }
+  body { line-height: 1.45; }
+
+  // Chrome around the report.
+  .no-print,
+  .skip-link,
+  app-site-nav,
+  app-site-footer { display: none !important; }
+
+  main { padding: 0 !important; }
+  .container { max-width: none; padding: 0; }
+
+  // Single column, each card kept whole where it fits.
+  .cards, .stack { display: block !important; }
+  // Custom elements are inline by default; inline wrappers around block
+  // cards confuse pagination and push every card onto its own page.
+  .cards > *, .stack > *, .report-card { display: block !important; }
+  .cards > *, .stack > * { margin-bottom: 5mm; }
+  // Grid containers paginate poorly; the shell and cards become plain blocks on paper.
+  app-root { display: block !important; min-height: 0 !important; }
+  .report-card .card {
+    display: block !important;
+    height: auto !important;
+    border-color: #bfb8a8;
+    padding: 4mm 5mm;
+  }
+  // Cards may run across pages, but a heading never sits alone at the
+  // foot of one, and short blocks stay whole.
+  .report-card .card__head { margin-bottom: 3mm; break-after: avoid; }
+  h2, h3 { break-after: avoid; }
+  li, p, figure, .artifact, .confidence { break-inside: avoid; }
+
+  // Long tables may split, but never mid-row.
+  table { break-inside: auto; }
+  tr { break-inside: avoid; }
+
+  // Collapsed sections are part of the record: open them on paper.
+  details > summary { list-style: none; color: var(--ink) !important; font-weight: 600; }
+  details > summary::-webkit-details-marker { display: none; }
+
+  .source { break-before: page; }
+  .source__body { border: 0 !important; padding: 0 !important; font-size: 9.5pt; }
+
+  .print-only { display: block !important; }
+  .print-footer {
+    margin-top: 8mm;
+    padding-top: 3mm;
+    border-top: 1px solid #0f1115;
+    font-size: 8pt;
+    color: #0f1115;
+    max-width: none;
+  }
+
+  a { color: var(--ink); text-decoration: none; }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    transition: none !important;
+    animation: none !important;
+  }
+}
