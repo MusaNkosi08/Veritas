@@ -1,5 +1,5 @@
 # Veritas
-## Writing Provenance Reports for academic staff.
+### Writing Provenance Reports for academic staff.
 
 Veritas is an authorship verification suite for universities. A lecturer submits a student's text, and Veritas returns a report on how the text was likely written: its sentence rhythm, vocabulary, formatting traces and, where earlier essays are supplied, how closely it matches the student's own habits.
 
